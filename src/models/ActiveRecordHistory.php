@@ -22,7 +22,7 @@ class ActiveRecordHistory extends \yii\db\ActiveRecord
 {
     public static function tableName()
     {
-        return 'activerecord_models_history';
+        return '{{%activerecord_models_history}}';
     }
 
 
