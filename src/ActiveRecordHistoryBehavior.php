@@ -283,8 +283,13 @@ class ActiveRecordHistoryBehavior extends Behavior
                 continue;
             }
             $newValue = $this->object->$changedAttributeName;
-            if( $oldValue == $newValue ){ // Should be not strict. E.g. 1 == 1.0
+            if( $oldValue === $newValue ){
                 continue;
+            }
+            if( is_numeric($newValue) && is_numeric($oldValue) ){ // Should be not strict. E.g. 1 == 1.0
+                if( $oldValue == $newValue ){
+                    continue;
+                }
             }
             $this->saveHistoryModel($event, $changedAttributeName, $oldValue, $newValue);
         }
