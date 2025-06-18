@@ -7,6 +7,7 @@ use kirillemko\activeRecordHistory\models\ActiveRecordHistory;
 use yii\data\Pagination;
 use yii\db\ActiveRecord;
 use \yii\base\Behavior;
+use yii\helpers\ArrayHelper;
 
 
 class ActiveRecordHistoryBehavior extends Behavior
@@ -148,6 +149,26 @@ class ActiveRecordHistoryBehavior extends Behavior
             return  $query->offset($paginator->offset)
                 ->limit($paginator->limit)
                 ->all();
+        }
+
+        return $query->all();
+    }
+
+    public function getFieldChangesHistory($fieldName, $limit=0, $sortAsc = true, $asArray=false)
+    {
+        $query = ActiveRecordHistory::find()
+            ->orderBy(['id' => ($sortAsc ? SORT_ASC : SORT_DESC)])
+            ->andWhere(['model' => get_class($this->owner)])
+            ->andWhere(['model_id' => $this->owner->getPrimaryKey()])
+            ->andWhere(['field_name' => $fieldName]);
+
+        if( $limit ){
+            $query->limit($limit);
+        }
+
+        if( $asArray ){
+            $query->asArray();
+            return ArrayHelper::getColumn($query->all(), 'new_value');
         }
 
         return $query->all();
